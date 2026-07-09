@@ -82,7 +82,7 @@
   let themeMediaQuery
 
   $: slide = slides[current]
-  $: progress = ((current + 1) / slides.length) * 100
+  $: progressRatio = (current + 1) / slides.length
   $: toneStyle = `--accent: ${tonePalette[slide.tone] ?? tonePalette.gold};`
   $: nextThemeModeOption =
     themeModes[(Math.max(themeModes.findIndex((mode) => mode.value === themePreference), 0) + 1) % themeModes.length]
@@ -1016,10 +1016,24 @@
         {/if}
       </div>
 
-      <footer class="progress-area">
+      <footer
+        class="progress-area"
+        style={`--deck-progress: ${progressRatio}; ${toneStyle}`}
+        aria-label={`Plate ${slide.number} of ${slides.length}`}
+      >
         <span>{String(slide.number).padStart(2, '0')}</span>
-        <div class="progress-track" aria-hidden="true">
-          <div style={`width: ${progress}%`}></div>
+        <div
+          class="progress-track"
+          role="progressbar"
+          aria-label="Slide progress"
+          aria-valuemin="1"
+          aria-valuemax={slides.length}
+          aria-valuenow={current + 1}
+        >
+          <span class="progress-fill"></span>
+          {#key current}
+            <span class="progress-spark" aria-hidden="true"></span>
+          {/key}
         </div>
         <span>{slides.length}</span>
       </footer>
