@@ -1,16 +1,16 @@
 export const sections = [
   { label: 'Opening', start: 1 },
   { label: 'Realities', start: 6 },
-  { label: 'Motivations', start: 13 },
-  { label: 'STAR Value', start: 15 },
-  { label: 'Retention', start: 20 },
-  { label: 'Visibility', start: 28 },
-  { label: 'Development', start: 34 },
-  { label: 'Impact', start: 37 },
-  { label: 'Recognition', start: 42 },
-  { label: 'Region Role', start: 45 },
-  { label: 'Action', start: 50 },
-  { label: 'Close', start: 53 },
+  { label: 'Motivations', start: 12 },
+  { label: 'STAR Value', start: 14 },
+  { label: 'Retention', start: 19 },
+  { label: 'Visibility', start: 27 },
+  { label: 'Development', start: 33 },
+  { label: 'Impact', start: 36 },
+  { label: 'Recognition', start: 41 },
+  { label: 'Region Role', start: 44 },
+  { label: 'Action', start: 49 },
+  { label: 'Close', start: 51 },
 ]
 
 export const slides = [
@@ -194,19 +194,6 @@ export const slides = [
   },
   {
     number: 12,
-    section: 'Realities',
-    kind: 'statement',
-    tone: 'leaf',
-    title: 'The Most Important Insight',
-    emphasis: 'insight',
-    statements: [
-      { lead: 'People join', bridge: 'for', focus: 'value.' },
-      { lead: 'People stay', bridge: 'for', focus: 'relationships.' },
-      { lead: 'People lead', bridge: 'because they', focus: 'belong.' },
-    ],
-  },
-  {
-    number: 13,
     section: 'Motivations',
     kind: 'list',
     tone: 'gold',
@@ -237,7 +224,7 @@ export const slides = [
       'Membership development becomes more effective when chapters understand and respond to different member motivations.',
   },
   {
-    number: 14,
+    number: 13,
     section: 'Motivations',
     kind: 'table',
     tone: 'forest',
@@ -256,7 +243,7 @@ export const slides = [
     ],
   },
   {
-    number: 15,
+    number: 14,
     section: 'STAR Value',
     kind: 'orbit',
     tone: 'clay',
@@ -265,7 +252,7 @@ export const slides = [
     items: ['Value', 'Connection', 'Visibility', 'Development', 'Advocacy', 'Recognition'],
   },
   {
-    number: 16,
+    number: 15,
     section: 'STAR Value',
     kind: 'hero',
     tone: 'teal',
@@ -296,7 +283,7 @@ export const slides = [
     ],
   },
   {
-    number: 17,
+    number: 16,
     section: 'STAR Value',
     kind: 'acronym',
     tone: 'plum',
@@ -309,7 +296,7 @@ export const slides = [
     ],
   },
   {
-    number: 18,
+    number: 17,
     section: 'STAR Value',
     kind: 'groups',
     tone: 'leaf',
@@ -339,7 +326,7 @@ export const slides = [
     ],
   },
   {
-    number: 19,
+    number: 18,
     section: 'STAR Value',
     kind: 'list',
     tone: 'gold',
@@ -355,7 +342,7 @@ export const slides = [
     ],
   },
   {
-    number: 20,
+    number: 19,
     section: 'Retention',
     kind: 'groups',
     tone: 'forest',
@@ -377,7 +364,7 @@ export const slides = [
     ],
   },
   {
-    number: 21,
+    number: 20,
     section: 'Retention',
     kind: 'list',
     tone: 'clay',
@@ -396,7 +383,7 @@ export const slides = [
     ],
   },
   {
-    number: 22,
+    number: 21,
     section: 'Retention',
     kind: 'list',
     tone: 'teal',
@@ -413,7 +400,7 @@ export const slides = [
     ],
   },
   {
-    number: 23,
+    number: 22,
     section: 'Retention',
     kind: 'list',
     tone: 'plum',
@@ -429,7 +416,7 @@ export const slides = [
     ],
   },
   {
-    number: 24,
+    number: 23,
     section: 'Retention',
     kind: 'groups',
     tone: 'leaf',
@@ -458,7 +445,7 @@ export const slides = [
     ],
   },
   {
-    number: 25,
+    number: 24,
     section: 'Retention',
     kind: 'list',
     tone: 'gold',
@@ -477,7 +464,7 @@ export const slides = [
     ],
   },
   {
-    number: 26,
+    number: 25,
     section: 'Retention',
     kind: 'list',
     tone: 'forest',
@@ -495,7 +482,7 @@ export const slides = [
     ],
   },
   {
-    number: 27,
+    number: 26,
     section: 'Retention',
     kind: 'hero',
     tone: 'clay',
@@ -523,7 +510,7 @@ export const slides = [
     ],
   },
   {
-    number: 28,
+    number: 27,
     section: 'Visibility',
     kind: 'statement',
     tone: 'teal',
@@ -538,7 +525,7 @@ export const slides = [
     ],
   },
   {
-    number: 29,
+    number: 28,
     section: 'Visibility',
     kind: 'flow',
     tone: 'plum',
@@ -579,7 +566,7 @@ export const slides = [
     ],
   },
   {
-    number: 30,
+    number: 29,
     section: 'Visibility',
     kind: 'list',
     tone: 'leaf',
@@ -599,7 +586,7 @@ export const slides = [
     ],
   },
   {
-    number: 31,
+    number: 30,
     section: 'Visibility',
     kind: 'groups',
     tone: 'gold',
@@ -626,7 +613,7 @@ export const slides = [
     ],
   },
   {
-    number: 32,
+    number: 31,
     section: 'Visibility',
     kind: 'list',
     tone: 'forest',
@@ -646,7 +633,7 @@ export const slides = [
     note: 'This will be further introduced by the Co-Chairman after this discussion.',
   },
   {
-    number: 33,
+    number: 32,
     section: 'Visibility',
     kind: 'ratio',
     tone: 'clay',
@@ -659,7 +646,7 @@ export const slides = [
     ],
   },
   {
-    number: 34,
+    number: 33,
     section: 'Development',
     kind: 'list',
     tone: 'teal',
@@ -677,7 +664,7 @@ export const slides = [
     ],
   },
   {
-    number: 35,
+    number: 34,
     section: 'Development',
     kind: 'list',
     tone: 'plum',
@@ -697,7 +684,7 @@ export const slides = [
     note: 'People support what they help build.',
   },
   {
-    number: 36,
+    number: 35,
     section: 'Development',
     kind: 'flow',
     tone: 'leaf',
@@ -714,7 +701,7 @@ export const slides = [
     lead: 'Membership development should also develop future leaders.',
   },
   {
-    number: 37,
+    number: 36,
     section: 'Impact',
     kind: 'statement',
     tone: 'gold',
@@ -747,7 +734,7 @@ export const slides = [
     ],
   },
   {
-    number: 38,
+    number: 37,
     section: 'Impact',
     kind: 'list',
     tone: 'forest',
@@ -766,7 +753,7 @@ export const slides = [
     ],
   },
   {
-    number: 39,
+    number: 38,
     section: 'Impact',
     kind: 'list',
     tone: 'clay',
@@ -785,7 +772,7 @@ export const slides = [
     ],
   },
   {
-    number: 40,
+    number: 39,
     section: 'Impact',
     kind: 'list',
     tone: 'teal',
@@ -802,7 +789,7 @@ export const slides = [
     ],
   },
   {
-    number: 41,
+    number: 40,
     section: 'Impact',
     kind: 'list',
     tone: 'plum',
@@ -822,7 +809,7 @@ export const slides = [
     ],
   },
   {
-    number: 42,
+    number: 41,
     section: 'Recognition',
     kind: 'list',
     tone: 'leaf',
@@ -840,7 +827,7 @@ export const slides = [
     ],
   },
   {
-    number: 43,
+    number: 42,
     section: 'Recognition',
     kind: 'list',
     tone: 'gold',
@@ -859,7 +846,7 @@ export const slides = [
     ],
   },
   {
-    number: 44,
+    number: 43,
     section: 'Recognition',
     kind: 'list',
     tone: 'forest',
@@ -876,7 +863,7 @@ export const slides = [
     ],
   },
   {
-    number: 45,
+    number: 44,
     section: 'Region Role',
     kind: 'cloud',
     tone: 'clay',
@@ -886,7 +873,7 @@ export const slides = [
     note: 'The Region should not merely monitor chapters.',
   },
   {
-    number: 46,
+    number: 45,
     section: 'Region Role',
     kind: 'list',
     tone: 'teal',
@@ -906,7 +893,7 @@ export const slides = [
     ],
   },
   {
-    number: 47,
+    number: 46,
     section: 'Region Role',
     kind: 'list',
     tone: 'plum',
@@ -924,7 +911,7 @@ export const slides = [
     ],
   },
   {
-    number: 48,
+    number: 47,
     section: 'Region Role',
     kind: 'list',
     tone: 'leaf',
@@ -941,7 +928,7 @@ export const slides = [
     ],
   },
   {
-    number: 49,
+    number: 48,
     section: 'Region Role',
     kind: 'list',
     tone: 'gold',
@@ -968,40 +955,7 @@ export const slides = [
     ],
   },
   {
-    number: 50,
-    section: 'Action',
-    kind: 'groups',
-    tone: 'forest',
-    title: 'Membership Recovery Program',
-    groups: [
-      {
-        title: 'Reconnect with',
-        items: [
-          'Lapsed members',
-          'Inactive members',
-          'Formerly active members',
-          'Members who renewed but no longer participate',
-        ],
-      },
-      {
-        title: 'Ask',
-        featured: 'How can we welcome you back?',
-        items: [],
-      },
-      {
-        title: 'Use',
-        items: [
-          'Personal calls',
-          'Short surveys',
-          'Re-invitation packets',
-          'Invitation messages',
-          'Fellowship or reactivation events',
-        ],
-      },
-    ],
-  },
-  {
-    number: 51,
+    number: 49,
     section: 'Action',
     kind: 'list',
     tone: 'clay',
@@ -1024,7 +978,7 @@ export const slides = [
     note: 'Data should be used for coaching, not criticism.',
   },
   {
-    number: 52,
+    number: 50,
     section: 'Action',
     kind: 'acronym',
     tone: 'plum',
@@ -1041,7 +995,7 @@ export const slides = [
     ],
   },
   {
-    number: 53,
+    number: 51,
     section: 'Close',
     kind: 'cloud',
     tone: 'leaf',
@@ -1051,7 +1005,7 @@ export const slides = [
     items: ['Value', 'Connection', 'Opportunity', 'Visibility', 'Belonging', 'Impact', 'Identity'],
   },
   {
-    number: 54,
+    number: 52,
     section: 'Close',
     kind: 'statement',
     tone: 'gold',
