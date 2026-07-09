@@ -28,6 +28,35 @@
 
   const themeLabels = Object.fromEntries(themeModes.map((mode) => [mode.value, mode.label]))
 
+  const presentationInteractiveSelector = [
+    'a[href]',
+    'button',
+    'input',
+    'select',
+    'textarea',
+    '[role="button"]',
+    '[role="link"]',
+    '[contenteditable="true"]',
+  ].join(', ')
+
+  const nextPresenterKeys = new Set([
+    'ArrowRight',
+    'ArrowDown',
+    'PageDown',
+    ' ',
+    'Enter',
+    'BrowserForward',
+    'MediaTrackNext',
+  ])
+  const previousPresenterKeys = new Set([
+    'ArrowLeft',
+    'ArrowUp',
+    'PageUp',
+    'Backspace',
+    'BrowserBack',
+    'MediaTrackPrevious',
+  ])
+
   const tonePalette = {
     gold: 'var(--tone-gold)',
     forest: 'var(--tone-forest)',
@@ -104,6 +133,110 @@
 
   function previous(options = {}) {
     goTo(current - 1, options)
+  }
+
+  function isPresentationInteractiveTarget(target) {
+    return target instanceof Element && Boolean(target.closest(presentationInteractiveSelector))
+  }
+
+  function isPresentationSlideTarget(target) {
+    return target instanceof Element && Boolean(target.closest('.deck-slide'))
+  }
+
+  function isTextEntryTarget(target) {
+    const tagName = target?.tagName
+    return (
+      target instanceof HTMLElement &&
+      (target.isContentEditable || tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA')
+    )
+  }
+
+  function navigateFromPresentationClick(event, direction) {
+    if (
+      event.defaultPrevented ||
+      !isPresentationSlideTarget(event.target) ||
+      isPresentationInteractiveTarget(event.target)
+    ) {
+      return
+    }
+
+    event.preventDefault()
+    if (direction === 'previous') {
+      previous({ animate: false })
+    } else {
+      next({ animate: false })
+    }
+  }
+
+  function handlePresentationClick(event) {
+    if (event.button === 0) {
+      navigateFromPresentationClick(event, 'next')
+    }
+  }
+
+  function handlePresentationContextMenu(event) {
+    navigateFromPresentationClick(event, 'previous')
+  }
+
+  function handlePresentationMouseDown(event) {
+    if (
+      (event.button === 3 || event.button === 4) &&
+      isPresentationSlideTarget(event.target) &&
+      !isPresentationInteractiveTarget(event.target)
+    ) {
+      event.preventDefault()
+    }
+  }
+
+  function handlePresentationMouseUp(event) {
+    if (event.button === 3) {
+      navigateFromPresentationClick(event, 'previous')
+    }
+
+    if (event.button === 4) {
+      navigateFromPresentationClick(event, 'next')
+    }
+  }
+
+  function handlePresentationKeydown(event) {
+    if (event.defaultPrevented || isTextEntryTarget(event.target)) return
+
+    if ((event.key === ' ' || event.key === 'Enter') && isPresentationInteractiveTarget(event.target)) return
+
+    if (nextPresenterKeys.has(event.key)) {
+      event.preventDefault()
+      next()
+      return
+    }
+
+    if (previousPresenterKeys.has(event.key)) {
+      event.preventDefault()
+      previous()
+      return
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault()
+      goTo(0, { animate: false })
+      return
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault()
+      goTo(slides.length - 1, { animate: false })
+      return
+    }
+
+    if (event.key.toLowerCase() === 'o') {
+      event.preventDefault()
+      overview = !overview
+      return
+    }
+
+    if (event.key === 'Escape' && overview) {
+      event.preventDefault()
+      overview = false
+    }
   }
 
   function toggleFullscreen() {
@@ -285,48 +418,19 @@
       }
     }
 
-    function handleKeydown(event) {
-      if (event.defaultPrevented) return
-
-      const tagName = event.target?.tagName
-      if (tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA') return
-
-      if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
-        event.preventDefault()
-        next({ animate: false })
-      }
-
-      if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
-        event.preventDefault()
-        previous({ animate: false })
-      }
-
-      if (event.key === 'Home') {
-        event.preventDefault()
-        goTo(0, { animate: false })
-      }
-
-      if (event.key === 'End') {
-        event.preventDefault()
-        goTo(slides.length - 1, { animate: false })
-      }
-
-      if (event.key.toLowerCase() === 'o') {
-        event.preventDefault()
-        overview = !overview
-      }
-
-      if (event.key === 'Escape' && overview) {
-        event.preventDefault()
-        overview = false
-      }
-    }
-
     window.addEventListener('hashchange', handleHashChange)
-    window.addEventListener('keydown', handleKeydown)
+    window.addEventListener('keydown', handlePresentationKeydown)
+    window.addEventListener('click', handlePresentationClick)
+    window.addEventListener('contextmenu', handlePresentationContextMenu)
+    window.addEventListener('mousedown', handlePresentationMouseDown, true)
+    window.addEventListener('mouseup', handlePresentationMouseUp, true)
     return () => {
       window.removeEventListener('hashchange', handleHashChange)
-      window.removeEventListener('keydown', handleKeydown)
+      window.removeEventListener('keydown', handlePresentationKeydown)
+      window.removeEventListener('click', handlePresentationClick)
+      window.removeEventListener('contextmenu', handlePresentationContextMenu)
+      window.removeEventListener('mousedown', handlePresentationMouseDown, true)
+      window.removeEventListener('mouseup', handlePresentationMouseUp, true)
       if (themeMediaQuery?.removeEventListener) {
         themeMediaQuery.removeEventListener('change', handleSystemThemeChange)
       } else {
