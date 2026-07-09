@@ -10,7 +10,7 @@ export const sections = [
   { label: 'Recognition', start: 42 },
   { label: 'Region Role', start: 45 },
   { label: 'Action', start: 50 },
-  { label: 'Close', start: 54 },
+  { label: 'Close', start: 53 },
 ]
 
 export const slides = [
@@ -1006,23 +1006,6 @@ export const slides = [
   {
     number: 52,
     section: 'Action',
-    kind: 'list',
-    tone: 'teal',
-    title: '90-Day Chapter Challenge',
-    label: 'Each chapter commits to',
-    items: [
-      'One recruitment initiative',
-      'One retention initiative',
-      'One engagement initiative',
-      'One STAR ID partner',
-      'One community impact project',
-      'One visibility project',
-      'One welcome or re-invitation packet rollout',
-    ],
-  },
-  {
-    number: 53,
-    section: 'Action',
     kind: 'acronym',
     tone: 'plum',
     title: 'STAR Region Membership Blueprint',
@@ -1038,7 +1021,7 @@ export const slides = [
     ],
   },
   {
-    number: 54,
+    number: 53,
     section: 'Close',
     kind: 'cloud',
     tone: 'leaf',
@@ -1048,7 +1031,7 @@ export const slides = [
     items: ['Value', 'Connection', 'Opportunity', 'Visibility', 'Belonging', 'Impact', 'Identity'],
   },
   {
-    number: 55,
+    number: 54,
     section: 'Close',
     kind: 'statement',
     tone: 'gold',
