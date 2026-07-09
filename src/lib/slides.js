@@ -39,7 +39,6 @@ export const slides = [
       'Recognize the different motivations of members',
       'Appreciate the role of Regions and Chapters in membership development',
       'Identify practical strategies to strengthen membership',
-      'Commit to actionable initiatives within the next 90 days',
     ],
   },
   {
