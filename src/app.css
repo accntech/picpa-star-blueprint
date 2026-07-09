@@ -263,13 +263,20 @@ select:focus-visible {
     border-color 180ms ease;
 }
 
-.toolbar-actions button:hover {
+.toolbar-actions button:not(:disabled):hover {
   border-color: color-mix(in oklch, var(--accent, var(--color-gold)) 62%, var(--plate-ink));
   background: color-mix(in oklch, var(--accent, var(--color-gold)) 10%, var(--blueprint-bg));
 }
 
-.toolbar-actions button:active {
+.toolbar-actions button:not(:disabled):active {
   transform: scale(0.97);
+}
+
+.toolbar-actions button:disabled {
+  border-color: color-mix(in oklch, var(--draft-line) 28%, transparent);
+  background: color-mix(in oklch, var(--blueprint-bg) 99%, var(--draft-line));
+  color: color-mix(in oklch, var(--plate-ink) 38%, var(--blueprint-bg));
+  cursor: not-allowed;
 }
 
 .toolbar-actions .theme-toggle {

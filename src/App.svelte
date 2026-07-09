@@ -83,6 +83,8 @@
 
   $: slide = slides[current]
   $: progressRatio = (current + 1) / slides.length
+  $: isFirstSlide = current <= 0
+  $: isLastSlide = current >= slides.length - 1
   $: toneStyle = `--accent: ${tonePalette[slide.tone] ?? tonePalette.gold};`
   $: nextThemeModeOption =
     themeModes[(Math.max(themeModes.findIndex((mode) => mode.value === themePreference), 0) + 1) % themeModes.length]
@@ -512,10 +514,10 @@
           <button type="button" on:click={toggleFullscreen} aria-label="Toggle fullscreen" title="Fullscreen">
             <Maximize2 size={18} strokeWidth={1.8} />
           </button>
-          <button type="button" on:click={previous} aria-label="Previous slide" title="Previous">
+          <button type="button" on:click={previous} disabled={isFirstSlide} aria-label="Previous slide" title="Previous">
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <button type="button" on:click={next} aria-label="Next slide" title="Next">
+          <button type="button" on:click={next} disabled={isLastSlide} aria-label="Next slide" title="Next">
             <ChevronRight size={20} strokeWidth={1.8} />
           </button>
         </div>
