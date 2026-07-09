@@ -25,6 +25,14 @@
   --draft-major: color-mix(in oklch, var(--draft-line) 7%, transparent);
   --plate-ink: oklch(0.22 0.04 236);
   --plate-muted: oklch(0.43 0.032 234);
+  --shadow-ink: oklch(0.22 0.04 236);
+  --dialog-scrim: color-mix(in oklch, var(--shadow-ink) 28%, transparent);
+  --tone-gold: oklch(0.72 0.135 77);
+  --tone-forest: oklch(0.33 0.095 168);
+  --tone-clay: oklch(0.54 0.14 37);
+  --tone-teal: oklch(0.58 0.105 198);
+  --tone-plum: oklch(0.39 0.09 323);
+  --tone-leaf: oklch(0.56 0.12 134);
   --mono: 'SFMono-Regular', 'Roboto Mono', Consolas, monospace;
   --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
@@ -37,6 +45,32 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+:root[data-theme='dark'] {
+  --blueprint-bg: oklch(0.18 0.024 236);
+  --blueprint-deep: oklch(0.235 0.026 236);
+  --blueprint-panel: oklch(0.25 0.026 236);
+  --draft-line: oklch(0.72 0.035 226);
+  --draft-faint: color-mix(in oklch, var(--draft-line) 4.5%, transparent);
+  --draft-major: color-mix(in oklch, var(--draft-line) 12%, transparent);
+  --plate-ink: oklch(0.92 0.018 92);
+  --plate-muted: oklch(0.72 0.025 224);
+  --shadow-ink: oklch(0.08 0.018 236);
+  --dialog-scrim: color-mix(in oklch, var(--shadow-ink) 66%, transparent);
+  --color-forest: oklch(0.68 0.09 168);
+  --color-gold: oklch(0.82 0.115 77);
+  --color-clay: oklch(0.73 0.11 37);
+  --color-teal: oklch(0.78 0.07 198);
+  --color-plum: oklch(0.74 0.075 323);
+  --color-leaf: oklch(0.76 0.1 134);
+  --tone-gold: oklch(0.8 0.125 77);
+  --tone-forest: oklch(0.68 0.09 168);
+  --tone-clay: oklch(0.72 0.105 37);
+  --tone-teal: oklch(0.76 0.075 198);
+  --tone-plum: oklch(0.73 0.075 323);
+  --tone-leaf: oklch(0.74 0.1 134);
+  color-scheme: dark;
 }
 
 * {
@@ -238,6 +272,15 @@ select:focus-visible {
   transform: scale(0.97);
 }
 
+.toolbar-actions .theme-toggle {
+  color: color-mix(in oklch, var(--accent, var(--color-gold)) 70%, var(--plate-ink));
+  box-shadow: inset 0 -2px 0 color-mix(in oklch, var(--accent, var(--color-gold)) 72%, var(--plate-ink));
+}
+
+.toolbar-actions .theme-toggle:hover {
+  color: var(--plate-ink);
+}
+
 .mobile-picker {
   display: none;
   width: min(100%, 88rem);
@@ -274,7 +317,7 @@ select:focus-visible {
 }
 
 .share-dialog::backdrop {
-  background: color-mix(in oklch, var(--plate-ink) 28%, transparent);
+  background: var(--dialog-scrim);
   backdrop-filter: blur(3px);
 }
 
@@ -293,7 +336,7 @@ select:focus-visible {
     linear-gradient(0deg, color-mix(in oklch, var(--draft-line) 2%, transparent) 1px, transparent 1px),
     var(--blueprint-bg);
   background-size: 18px 18px, 18px 18px, auto;
-  box-shadow: 0 1.2rem 3rem color-mix(in oklch, var(--plate-ink) 16%, transparent);
+  box-shadow: 0 1.2rem 3rem color-mix(in oklch, var(--shadow-ink) 16%, transparent);
   max-height: inherit;
   overflow: auto;
   padding: 1rem;

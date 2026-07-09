@@ -9,19 +9,32 @@
     Grid2X2,
     Home,
     Maximize2,
+    Monitor,
     MonitorPlay,
+    Moon,
     Share2,
+    Sun,
     X,
   } from '@lucide/svelte'
   import { sections, slides } from './lib/slides.js'
 
+  const themeStorageKey = 'star-membership-theme'
+
+  const themeModes = [
+    { value: 'system', label: 'System' },
+    { value: 'dark', label: 'Dark' },
+    { value: 'light', label: 'Light' },
+  ]
+
+  const themeLabels = Object.fromEntries(themeModes.map((mode) => [mode.value, mode.label]))
+
   const tonePalette = {
-    gold: 'oklch(0.72 0.135 77)',
-    forest: 'oklch(0.33 0.095 168)',
-    clay: 'oklch(0.54 0.14 37)',
-    teal: 'oklch(0.58 0.105 198)',
-    plum: 'oklch(0.39 0.09 323)',
-    leaf: 'oklch(0.56 0.12 134)',
+    gold: 'var(--tone-gold)',
+    forest: 'var(--tone-forest)',
+    clay: 'var(--tone-clay)',
+    teal: 'var(--tone-teal)',
+    plum: 'var(--tone-plum)',
+    leaf: 'var(--tone-leaf)',
   }
 
   let current = 0
@@ -35,10 +48,20 @@
   let copyResetTimer
   let shareDialogClosing = false
   let shareCloseTimer
+  let themePreference = 'system'
+  let activeTheme = 'light'
+  let themeMediaQuery
 
   $: slide = slides[current]
   $: progress = ((current + 1) / slides.length) * 100
   $: toneStyle = `--accent: ${tonePalette[slide.tone] ?? tonePalette.gold};`
+  $: nextThemeModeOption =
+    themeModes[(Math.max(themeModes.findIndex((mode) => mode.value === themePreference), 0) + 1) % themeModes.length]
+  $: currentThemeLabel =
+    themePreference === 'system'
+      ? `System (${themeLabels[activeTheme].toLowerCase()} active)`
+      : themeLabels[themePreference]
+  $: themeToggleLabel = `${currentThemeLabel} theme. Switch to ${nextThemeModeOption.label.toLowerCase()} theme`
 
   function plateHashFor(index) {
     return `plate-${String(slides[index].number).padStart(2, '0')}`
@@ -93,6 +116,55 @@
 
   function activeSection(number) {
     return [...sections].reverse().find((section) => number >= section.start)?.label
+  }
+
+  function normalizeThemePreference(value) {
+    return themeModes.some((mode) => mode.value === value) ? value : 'system'
+  }
+
+  function systemTheme() {
+    return themeMediaQuery?.matches ? 'dark' : 'light'
+  }
+
+  function resolveTheme(preference) {
+    return preference === 'system' ? systemTheme() : preference
+  }
+
+  function applyThemePreference(preference = themePreference) {
+    themePreference = normalizeThemePreference(preference)
+    activeTheme = resolveTheme(themePreference)
+
+    if (typeof document === 'undefined') return
+
+    const root = document.documentElement
+    root.dataset.themePreference = themePreference
+    root.dataset.theme = activeTheme
+    root.style.colorScheme = activeTheme
+  }
+
+  function readThemePreference() {
+    try {
+      return normalizeThemePreference(window.localStorage.getItem(themeStorageKey))
+    } catch (error) {
+      return 'system'
+    }
+  }
+
+  function persistThemePreference(preference) {
+    try {
+      window.localStorage.setItem(themeStorageKey, preference)
+    } catch (error) {
+      // Private browsing and locked-down embeds can reject storage writes.
+    }
+  }
+
+  function setThemePreference(preference) {
+    applyThemePreference(preference)
+    persistThemePreference(themePreference)
+  }
+
+  function toggleThemePreference() {
+    setThemePreference(nextThemeModeOption.value)
   }
 
   function straplineBadges(value) {
@@ -184,6 +256,19 @@
   }
 
   onMount(() => {
+    themeMediaQuery = window.matchMedia?.('(prefers-color-scheme: dark)')
+    applyThemePreference(readThemePreference())
+
+    function handleSystemThemeChange() {
+      applyThemePreference(themePreference)
+    }
+
+    if (themeMediaQuery?.addEventListener) {
+      themeMediaQuery.addEventListener('change', handleSystemThemeChange)
+    } else {
+      themeMediaQuery?.addListener?.(handleSystemThemeChange)
+    }
+
     const linkedPlateIndex = plateIndexFromUrl()
     if (linkedPlateIndex >= 0) {
       goTo(linkedPlateIndex, { animate: false })
@@ -242,6 +327,11 @@
     return () => {
       window.removeEventListener('hashchange', handleHashChange)
       window.removeEventListener('keydown', handleKeydown)
+      if (themeMediaQuery?.removeEventListener) {
+        themeMediaQuery.removeEventListener('change', handleSystemThemeChange)
+      } else {
+        themeMediaQuery?.removeListener?.(handleSystemThemeChange)
+      }
       clearTimeout(copyResetTimer)
       clearTimeout(shareCloseTimer)
     }
@@ -282,6 +372,21 @@
         </nav>
 
         <div class="toolbar-actions" aria-label="Presentation controls">
+          <button
+            type="button"
+            class="theme-toggle"
+            on:click={toggleThemePreference}
+            aria-label={themeToggleLabel}
+            title={themeToggleLabel}
+          >
+            {#if themePreference === 'system'}
+              <Monitor size={18} strokeWidth={1.8} />
+            {:else if themePreference === 'dark'}
+              <Moon size={18} strokeWidth={1.8} />
+            {:else}
+              <Sun size={18} strokeWidth={1.8} />
+            {/if}
+          </button>
           <button type="button" on:click={openShareDialog} aria-label="Share current link" title="Share">
             <Share2 size={18} strokeWidth={1.8} />
           </button>
