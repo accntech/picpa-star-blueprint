@@ -1,12 +1,16 @@
 <script>
   import { onMount } from 'svelte'
+  import QRCode from 'qrcode'
   import {
+    Check,
     ChevronLeft,
     ChevronRight,
+    Copy,
     Grid2X2,
     Home,
     Maximize2,
     MonitorPlay,
+    Share2,
     X,
   } from '@lucide/svelte'
   import { sections, slides } from './lib/slides.js'
@@ -22,22 +26,61 @@
 
   let current = 0
   let overview = false
+  let plateContentMotion = true
+  let shareDialog
+  let shareUrl = ''
+  let shareQrCode = ''
+  let shareError = ''
+  let copiedShareUrl = false
+  let copyResetTimer
+  let shareDialogClosing = false
+  let shareCloseTimer
 
   $: slide = slides[current]
   $: progress = ((current + 1) / slides.length) * 100
   $: toneStyle = `--accent: ${tonePalette[slide.tone] ?? tonePalette.gold};`
 
-  function goTo(index) {
+  function plateHashFor(index) {
+    return `plate-${String(slides[index].number).padStart(2, '0')}`
+  }
+
+  function plateIndexFromUrl() {
+    if (typeof window === 'undefined') return -1
+
+    const match = window.location.hash.toLowerCase().match(/^#plate-(\d{1,3})$/)
+    if (!match) return -1
+
+    const plateNumber = Number(match[1])
+    return slides.findIndex((option) => option.number === plateNumber)
+  }
+
+  function syncPlateUrl(index) {
+    if (typeof window === 'undefined') return
+
+    const url = new URL(window.location.href)
+    url.hash = plateHashFor(index)
+
+    if (url.href !== window.location.href) {
+      window.history.replaceState({ plate: slides[index].number }, '', url)
+    }
+  }
+
+  function goTo(index, { animate = true, syncUrl = true } = {}) {
+    plateContentMotion = animate
     current = Math.max(0, Math.min(slides.length - 1, index))
     overview = false
+
+    if (syncUrl) {
+      syncPlateUrl(current)
+    }
   }
 
-  function next() {
-    goTo(current + 1)
+  function next(options = {}) {
+    goTo(current + 1, options)
   }
 
-  function previous() {
-    goTo(current - 1)
+  function previous(options = {}) {
+    goTo(current - 1, options)
   }
 
   function toggleFullscreen() {
@@ -56,7 +99,107 @@
     return value?.split('|').map((item) => item.trim()).filter(Boolean) ?? []
   }
 
+  async function refreshShareCode() {
+    syncPlateUrl(current)
+    shareUrl = window.location.href
+    shareQrCode = ''
+    shareError = ''
+
+    try {
+      shareQrCode = await QRCode.toDataURL(shareUrl, {
+        errorCorrectionLevel: 'M',
+        margin: 2,
+        scale: 8,
+        color: {
+          dark: '#243040',
+          light: '#ffffff',
+        },
+      })
+    } catch (error) {
+      shareError = 'QR code unavailable'
+    }
+  }
+
+  async function openShareDialog() {
+    copiedShareUrl = false
+    shareDialogClosing = false
+    clearTimeout(shareCloseTimer)
+    await refreshShareCode()
+    if (!shareDialog?.open) {
+      shareDialog?.showModal()
+    }
+  }
+
+  function closeShareDialog() {
+    if (!shareDialog?.open || shareDialogClosing) return
+
+    shareDialogClosing = true
+    clearTimeout(shareCloseTimer)
+    shareCloseTimer = setTimeout(() => {
+      shareDialog?.close()
+    }, 220)
+  }
+
+  function finishShareDialogClose() {
+    clearTimeout(shareCloseTimer)
+    shareDialog?.close()
+  }
+
+  function handleSharePanelAnimationEnd(event) {
+    if (shareDialogClosing && event.target === event.currentTarget) {
+      finishShareDialogClose()
+    }
+  }
+
+  function handleShareDialogCancel(event) {
+    event.preventDefault()
+    closeShareDialog()
+  }
+
+  function handleShareDialogClosed() {
+    shareDialogClosing = false
+    copiedShareUrl = false
+    clearTimeout(shareCloseTimer)
+  }
+
+  function handleShareDialogClick(event) {
+    if (event.target === shareDialog) {
+      closeShareDialog()
+    }
+  }
+
+  async function copyShareLink() {
+    if (!shareUrl) return
+
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      copiedShareUrl = true
+      clearTimeout(copyResetTimer)
+      copyResetTimer = setTimeout(() => {
+        copiedShareUrl = false
+      }, 1800)
+    } catch (error) {
+      shareError = 'Copy unavailable'
+    }
+  }
+
   onMount(() => {
+    const linkedPlateIndex = plateIndexFromUrl()
+    if (linkedPlateIndex >= 0) {
+      goTo(linkedPlateIndex, { animate: false })
+    } else {
+      syncPlateUrl(current)
+    }
+
+    function handleHashChange() {
+      const linkedIndex = plateIndexFromUrl()
+      if (linkedIndex >= 0) {
+        goTo(linkedIndex, { animate: false })
+      } else {
+        syncPlateUrl(current)
+      }
+    }
+
     function handleKeydown(event) {
       if (event.defaultPrevented) return
 
@@ -65,22 +208,22 @@
 
       if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
         event.preventDefault()
-        next()
+        next({ animate: false })
       }
 
       if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
         event.preventDefault()
-        previous()
+        previous({ animate: false })
       }
 
       if (event.key === 'Home') {
         event.preventDefault()
-        goTo(0)
+        goTo(0, { animate: false })
       }
 
       if (event.key === 'End') {
         event.preventDefault()
-        goTo(slides.length - 1)
+        goTo(slides.length - 1, { animate: false })
       }
 
       if (event.key.toLowerCase() === 'o') {
@@ -94,8 +237,14 @@
       }
     }
 
+    window.addEventListener('hashchange', handleHashChange)
     window.addEventListener('keydown', handleKeydown)
-    return () => window.removeEventListener('keydown', handleKeydown)
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange)
+      window.removeEventListener('keydown', handleKeydown)
+      clearTimeout(copyResetTimer)
+      clearTimeout(shareCloseTimer)
+    }
   })
 </script>
 
@@ -133,6 +282,9 @@
         </nav>
 
         <div class="toolbar-actions" aria-label="Presentation controls">
+          <button type="button" on:click={openShareDialog} aria-label="Share current link" title="Share">
+            <Share2 size={18} strokeWidth={1.8} />
+          </button>
           <button type="button" on:click={() => goTo(0)} aria-label="Go to first slide" title="First slide">
             <Home size={18} strokeWidth={1.8} />
           </button>
@@ -181,7 +333,12 @@
             {/each}
           </div>
         {:else}
-          <article class={`deck-slide deck-slide-${slide.kind}`} class:deck-slide-finale={slide.emphasis === 'finale'}>
+          {#key current}
+            <article
+              class={`deck-slide deck-slide-${slide.kind}${slide.emphasis ? ` deck-slide-${slide.emphasis}` : ''}`}
+              class:deck-slide-finale={slide.emphasis === 'finale'}
+              class:plate-motion-off={!plateContentMotion}
+            >
             <div class="blueprint-grid" aria-hidden="true"></div>
             <div class="plate-mark plate-mark-nw" aria-hidden="true"></div>
             <div class="plate-mark plate-mark-ne" aria-hidden="true"></div>
@@ -299,7 +456,35 @@
                     </div>
                   {/if}
                 {:else if slide.kind === 'statement'}
-                  {#if slide.emphasis === 'standard-bearer'}
+                  {#if slide.emphasis === 'expertise-service'}
+                    <div class="expertise-service-layout">
+                      <section class="expertise-service-emblem" aria-label={slide.focus.label}>
+                        <span>{slide.focus.label}</span>
+                        <strong>{slide.focus.title}</strong>
+                        <p>{slide.focus.body}</p>
+                      </section>
+
+                      <div class="expertise-service-panel">
+                        <div class="expertise-service-statements">
+                          {#each slide.statements as statement, index}
+                            <article class="expertise-service-statement">
+                              <span>{String(index + 1).padStart(2, '0')}</span>
+                              <div>
+                                <small>{statement.label}</small>
+                                <p>{statement.text}</p>
+                              </div>
+                            </article>
+                          {/each}
+                        </div>
+
+                        <ul class="expertise-service-modes" aria-label="Professional service modes">
+                          {#each slide.serviceModes as mode}
+                            <li>{mode}</li>
+                          {/each}
+                        </ul>
+                      </div>
+                    </div>
+                  {:else if slide.emphasis === 'standard-bearer'}
                     <div class="bearer-layout">
                       <section class="bearer-emblem" aria-label="Standard bearer role">
                         <span>Visible</span>
@@ -617,7 +802,8 @@
                 <strong>{String(slide.number).padStart(2, '0')} / {slides.length}</strong>
               </div>
             </footer>
-          </article>
+            </article>
+          {/key}
         {/if}
       </div>
 
@@ -630,4 +816,51 @@
       </footer>
     </section>
   </div>
+
+  <dialog
+    class="share-dialog"
+    class:share-dialog-closing={shareDialogClosing}
+    style={toneStyle}
+    bind:this={shareDialog}
+    aria-labelledby="share-dialog-title"
+    on:click={handleShareDialogClick}
+    on:cancel={handleShareDialogCancel}
+    on:close={handleShareDialogClosed}
+  >
+    <div class="share-panel" on:animationend={handleSharePanelAnimationEnd}>
+      <header class="share-panel-header">
+        <div>
+          <span class="toolbar-kicker">Share link</span>
+          <h2 id="share-dialog-title">PICPA STAR Membership Blueprint</h2>
+        </div>
+        <button type="button" on:click={closeShareDialog} aria-label="Close share dialog" title="Close">
+          <X size={18} strokeWidth={1.8} />
+        </button>
+      </header>
+
+      <div class="qr-frame" aria-live="polite">
+        {#if shareQrCode}
+          <img src={shareQrCode} alt={`QR code for ${shareUrl}`} />
+        {:else}
+          <span>{shareError || 'Generating QR code'}</span>
+        {/if}
+      </div>
+
+      <div class="share-link-row">
+        <p>{shareUrl}</p>
+        <button
+          type="button"
+          on:click={copyShareLink}
+          aria-label={copiedShareUrl ? 'Link copied' : 'Copy link'}
+          title={copiedShareUrl ? 'Copied' : 'Copy link'}
+        >
+          {#if copiedShareUrl}
+            <Check size={18} strokeWidth={1.9} />
+          {:else}
+            <Copy size={18} strokeWidth={1.8} />
+          {/if}
+        </button>
+      </div>
+    </div>
+  </dialog>
 </main>

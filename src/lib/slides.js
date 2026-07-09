@@ -720,10 +720,31 @@ export const slides = [
     kind: 'statement',
     tone: 'gold',
     title: 'Beyond Charity',
+    emphasis: 'expertise-service',
+    lead: 'Community impact grows when CPA expertise becomes visible, practical, and trusted.',
+    focus: {
+      label: 'Impact principle',
+      title: 'Expertise is service',
+      body: 'PICPA serves the public best when CPA knowledge is applied where communities make decisions.',
+    },
     statements: [
-      'Community engagement is not only about outreach or donations.',
-      'PICPA must be visible through professional expertise.',
-      'Our knowledge is one of our strongest forms of service.',
+      {
+        label: 'Reframe service',
+        text: 'Community engagement is not only outreach or donations.',
+      },
+      {
+        label: 'Show up as experts',
+        text: 'PICPA becomes visible through professional expertise.',
+      },
+      {
+        label: 'Turn knowledge outward',
+        text: 'Our knowledge is one of our strongest forms of service.',
+      },
+    ],
+    serviceModes: [
+      'Educate',
+      'Advise',
+      'Strengthen',
     ],
   },
   {
